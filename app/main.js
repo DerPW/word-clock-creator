@@ -226,6 +226,7 @@ function getWordclockHighlightMap(hour, minute) {
     const map = [];
     var ten = -1;
     var five = -1;
+    var four = -1;
     for (const word of words) {
         var pos = 0;
         var ten_count = findWordCount(words, "ZEHN");
@@ -257,6 +258,21 @@ function getWordclockHighlightMap(hour, minute) {
             }
 
             pos = five;
+        }
+        var four_count = findWordCount(words, "VIER");
+        if (word == "VIER") {
+            if (four_count == 1) {
+                // Spezialfälle
+                if (words[3] == "UHR" || words[2] != "VIER") {
+                    four = 1;
+                } else {
+                    four = 0;
+                }
+            } else {
+                four++;
+            }
+
+            pos = four;
         }
         const positions = findAllWordPositionsInGrid(grid, word);
         if (positions.length > 0) {
