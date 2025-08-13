@@ -228,19 +228,18 @@ function getWordclockHighlightMap(hour, minute) {
     for (const word of words) {
         var pos = 0;
         var ten_count = findWordCount(words, "ZEHN");
-        if(word == "ZEHN") {
-            if(ten_count == 1 && words[3] == "UHR"){
-                ten = 1;
-            }
-            else if(ten_count == 1 && words[2] != "ZEHN") {
-                ten = 1;
-            }
-            else if(ten_count == 1 ) {
-                ten = 0;
-            }
-            else {
+        if (word == "ZEHN") {
+            if (ten_count == 1) {
+                // Spezialfälle
+                if (words[3] == "UHR" || words[2] != "ZEHN") {
+                    ten = 1;
+                } else {
+                    ten = 0;
+                }
+            } else {
                 ten++;
             }
+
             pos = ten;
         }
         const positions = findAllWordPositionsInGrid(grid, word);
