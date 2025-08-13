@@ -80,7 +80,6 @@
 
 /* Preview Clock */
 #clockPreview {
-    margin: 2rem 0 2rem 0;
     width: 20rem;
     height: 20rem;
     aspect-ratio: 1 / 1;
@@ -188,6 +187,7 @@
     padding: 1.2rem 1.5rem 1.5rem 1.5rem;
     min-width: 270px;
     max-width: 350px;
+    margin-top: 15px;
 }
 #addWordForm {
     display: flex;

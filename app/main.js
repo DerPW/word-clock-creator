@@ -191,35 +191,48 @@ function getWordclockHighlightMap(hour, minute) {
         if (nextHour === 13) nextHour = 1;
     }
     // Wörter für die aktuelle Zeit bestimmen
-    if (m === 0) {
-        if (h === 1) {
-            words.push("EIN");
-        } else {
-            words.push(hourWords[h-1]);
-        }
-        words.push("UHR");
-    } else if (m === 5) {
-        words.push("FÜNF", "NACH", hourWords[h-1]);
-    } else if (m === 10) {
-        words.push("ZEHN", "NACH", hourWords[h-1]);
-    } else if (m === 15) {
-        words.push("VIERTEL", "NACH", hourWords[h-1]);
-    } else if (m === 20) {
-        words.push("ZWANZIG", "NACH", hourWords[h-1]);
-    } else if (m === 25) {
-        words.push("FÜNF", "VOR", "HALB", hourWords[nextHour-1]);
-    } else if (m === 30) {
-        words.push("HALB", hourWords[nextHour-1]);
-    } else if (m === 35) {
-        words.push("FÜNF", "NACH", "HALB", hourWords[nextHour-1]);
-    } else if (m === 40) {
-        words.push("ZWANZIG", "VOR", hourWords[nextHour-1]);
-    } else if (m === 45) {
-        words.push("VIERTEL", "VOR", hourWords[nextHour-1]);
-    } else if (m === 50) {
-        words.push("ZEHN", "VOR", hourWords[nextHour-1]);
-    } else if (m === 55) {
-        words.push("FÜNF", "VOR", hourWords[nextHour-1]);
+    switch (m) {
+        case 0:
+            if (h === 1) {
+                words.push("EIN");
+            } else {
+                words.push(hourWords[h-1]);
+            }
+            words.push("UHR");
+            break;
+        case 5:
+            words.push("FÜNF", "NACH", hourWords[h-1]);
+            break;
+        case 10:
+            words.push("ZEHN", "NACH", hourWords[h-1]);
+            break;
+        case 15:
+            words.push("VIERTEL", "NACH", hourWords[h-1]);
+            break;
+        case 20:
+            words.push("ZWANZIG", "NACH", hourWords[h-1]);
+            break;
+        case 25:
+            words.push("FÜNF", "VOR", "HALB", hourWords[nextHour-1]);
+            break;
+        case 30:
+            words.push("HALB", hourWords[nextHour-1]);
+            break;
+        case 35:
+            words.push("FÜNF", "NACH", "HALB", hourWords[nextHour-1]);
+            break;
+        case 40:
+            words.push("ZWANZIG", "VOR", hourWords[nextHour-1]);
+            break;
+        case 45:
+            words.push("VIERTEL", "VOR", hourWords[nextHour-1]);
+            break;
+        case 50:
+            words.push("ZEHN", "VOR", hourWords[nextHour-1]);
+            break;
+        case 55:
+            words.push("FÜNF", "VOR", hourWords[nextHour-1]);
+            break;
     }
 
     // Mapping: Wort -> alle Buchstaben-Positionen im Grid
