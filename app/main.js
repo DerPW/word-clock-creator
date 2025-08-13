@@ -279,7 +279,6 @@ function getWordclockHighlightMap(hour, minute) {
             map.push({ word: word, positions: positions[pos] });
         }
     }
-    console.log(map);
     return map;
 }
 
