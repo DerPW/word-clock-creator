@@ -358,7 +358,7 @@ let grid = [
     Array.from('SIEBENXACHT'.split('')),
     Array.from('XNEUNXZEHNX'.split('')),
     Array.from('XELFXZWÖLFX'.split('')),
-    Array.from('XXXXXUHRXX'.split(''))
+    Array.from('XXXXXUHRXXX'.split(''))
 ];
 
 // Standardbegriffe für Vorschläge
