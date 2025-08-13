@@ -25,6 +25,14 @@ window.addEventListener('DOMContentLoaded', function() {
     // Zeit- und Highlight-Änderungen triggern Preview
     const previewTime = document.getElementById('previewTime');
     const highlightColor = document.getElementById('highlightColor');
+    // Setze Standardzeit auf aktuelle Uhrzeit (ohne Rundung)
+    if (previewTime && !previewTime.value) {
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        previewTime.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        renderClockPreview();
+    }
     [previewTime, highlightColor].forEach(el => {
         if (el) {
             el.addEventListener('input', function() { renderClockPreview(); });
@@ -125,7 +133,7 @@ function renderClockPreview() {
     clockPreview.style.letterSpacing = letterSpacing + 'em';
 
     // Zeit-Highlighting: Ermittle Wörter, die für die Uhrzeit leuchten sollen
-    let highlightMap = {};
+    let highlightMap = [];
     if (previewTime) {
         const [h, m] = previewTime.split(':').map(Number);
         highlightMap = getWordclockHighlightMap(h, m);
@@ -141,11 +149,12 @@ function renderClockPreview() {
         for (let j = 0; j < cols; j++) {
             const letter = grid[i] && grid[i][j] ? grid[i][j] : '';
             let cellClass = '';
-            if (Object.keys(highlightMap).length > 0) {
+            let keyCount = Object.keys(highlightMap).length;
+            if (keyCount > 0) {
                 // Prüfe, ob dieses Feld zu einem leuchtenden Wort gehört
                 let found = false;
-                for (const word in highlightMap) {
-                    for (const pos of highlightMap[word]) {
+                for (const word of highlightMap) {
+                    for (const pos of word.positions) {
                         if (pos[0] === i && pos[1] === j) { found = true; break; }
                     }
                     if (found) break;
@@ -181,7 +190,7 @@ function getWordclockHighlightMap(hour, minute) {
         nextHour = (h % 12) + 1;
         if (nextHour === 13) nextHour = 1;
     }
-    // Zeitlogik
+    // Wörter für die aktuelle Zeit bestimmen
     if (m === 0) {
         if (h === 1) {
             words.push("EIN");
@@ -190,57 +199,61 @@ function getWordclockHighlightMap(hour, minute) {
         }
         words.push("UHR");
     } else if (m === 5) {
-        words.push("FÜNF"); words.push("NACH"); words.push(hourWords[h-1]);
+        words.push("FÜNF", "NACH", hourWords[h-1]);
     } else if (m === 10) {
-        words.push("ZEHN"); words.push("NACH"); words.push(hourWords[h-1]);
+        words.push("ZEHN", "NACH", hourWords[h-1]);
     } else if (m === 15) {
-        words.push("VIERTEL"); words.push("NACH"); words.push(hourWords[h-1]);
+        words.push("VIERTEL", "NACH", hourWords[h-1]);
     } else if (m === 20) {
-        words.push("ZWANZIG"); words.push("NACH"); words.push(hourWords[h-1]);
+        words.push("ZWANZIG", "NACH", hourWords[h-1]);
     } else if (m === 25) {
-        words.push("FÜNF"); words.push("VOR"); words.push("HALB"); words.push(hourWords[nextHour-1]);
+        words.push("FÜNF", "VOR", "HALB", hourWords[nextHour-1]);
     } else if (m === 30) {
-        words.push("HALB"); words.push(hourWords[nextHour-1]);
+        words.push("HALB", hourWords[nextHour-1]);
     } else if (m === 35) {
-        words.push("FÜNF"); words.push("NACH"); words.push("HALB"); words.push(hourWords[nextHour-1]);
+        words.push("FÜNF", "NACH", "HALB", hourWords[nextHour-1]);
     } else if (m === 40) {
-        words.push("ZWANZIG"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+        words.push("ZWANZIG", "VOR", hourWords[nextHour-1]);
     } else if (m === 45) {
-        words.push("VIERTEL"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+        words.push("VIERTEL", "VOR", hourWords[nextHour-1]);
     } else if (m === 50) {
-        words.push("ZEHN"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+        words.push("ZEHN", "VOR", hourWords[nextHour-1]);
     } else if (m === 55) {
-        words.push("FÜNF"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+        words.push("FÜNF", "VOR", hourWords[nextHour-1]);
     }
-    // Finde die Positionen der Wörter im Grid
-    const map = {};
+
+    // Mapping: Wort -> alle Buchstaben-Positionen im Grid
+    const map = [];
+    var ten = -1;
     for (const word of words) {
-        const allPositions = findAllWordPositionsInGrid(grid, word);
-        // Versuche ein Vorkommen zu finden, das nicht Teil eines längeren Wortes ist
-        let chosen = null;
-        for (const posArr of allPositions) {
-            // Prüfe, ob dieses Vorkommen Teil eines anderen (längeren) Wortes ist
-            let isPartOfLonger = false;
-            for (const otherWord of requiredWords) {
-                if (otherWord.length > word.length) {
-                    for (const otherPosArr of findAllWordPositionsInGrid(grid, otherWord)) {
-                        if (posArr.every(([x, y]) => otherPosArr.some(([ox, oy]) => ox === x && oy === y))) {
-                            isPartOfLonger = true;
-                            break;
-                        }
-                    }
-                }
-                if (isPartOfLonger) break;
+        var pos = 0;
+        var ten_count = findWordCount(words, "ZEHN");
+        if(word == "ZEHN") {
+            if(ten_count == 1 && words[3] == "UHR"){
+                ten = 1;
             }
-            if (!isPartOfLonger) {
-                chosen = posArr;
-                break;
+            else if(ten_count == 1 && words[2] != "ZEHN") {
+                ten = 1;
             }
+            else if(ten_count == 1 ) {
+                ten = 0;
+            }
+            else {
+                ten++;
+            }
+            pos = ten;
         }
-        if (!chosen && allPositions.length > 0) chosen = allPositions[0];
-        if (chosen) map[word] = chosen;
+        const positions = findAllWordPositionsInGrid(grid, word);
+        if (positions.length > 0) {
+            map.push({ word: word, positions: positions[pos] });
+        }
     }
+    console.log(map);
     return map;
+}
+
+function findWordCount(words, word){
+    return words.filter(w => w === word).length;
 }
 
 // Gibt alle Buchstaben-Positionen aller Vorkommen eines Wortes im Grid zurück (horizontal/vertikal)
