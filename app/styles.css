@@ -1,3 +1,120 @@
+#clockPreview .highlight.rainbow {
+    background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet, red);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbow-move 2s linear infinite;
+}
+
+@keyframes rainbow-move {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+#previewSettingsTabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+#previewSettingsTabs .tab {
+    background: #e0e0e0;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #333;
+    outline: none;
+    transition: background 0.2s, color 0.2s;
+}
+#previewSettingsTabs .tab.active {
+    background: #fff;
+    color: #0078d7;
+    font-weight: bold;
+    border-bottom: 2px solid #0078d7;
+}
+
+/* Highlighting für die Clock Preview */
+#clockPreview .highlight {
+    color: var(--highlight-color, #ffe600);
+    text-shadow: 0 0 8px var(--highlight-color, #ffe600), 0 0 2px #fff;
+    font-weight: bold;
+    opacity: 1;
+}
+#clockPreview .dimmed {
+    color: #888;
+    opacity: 0.4;
+}
+/* Tabs */
+#tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.tab {
+    background: #e0e0e0;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    padding: 0.7rem 2.2rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #333;
+    outline: none;
+    transition: background 0.2s, color 0.2s;
+}
+.tab.active {
+    background: #fff;
+    color: #0078d7;
+    font-weight: bold;
+    border-bottom: 2px solid #0078d7;
+}
+
+/* Preview Clock */
+#clockPreview {
+    margin: 2rem 0 2rem 0;
+    width: 20rem;
+    height: 20rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    background: #222;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem;
+}
+#clockPreview table {
+    border-collapse: separate;
+    border-spacing: 0.2rem;
+}
+#clockPreview td {
+    width: 2.2rem;
+    aspect-ratio: 1 / 1;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #fff;
+    background: transparent;
+    border: none;
+    user-select: none;
+    padding: 0;
+}
+#previewSettingsPanel {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 1.2rem 1.5rem 1.5rem 1.5rem;
+    min-width: 270px;
+    max-width: 350px;
+    margin-left: 0.5rem;
+}
+#clockBgColor {
+    margin-top: 0.5rem;
+    width: 3rem;
+    height: 2rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
 #wordChecklist .addWordBtn {
     background: none;
     border: none;

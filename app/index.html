@@ -8,30 +8,97 @@
 </head>
 <body>
     <h1>Word Clock Creator</h1>
-    <div id="controls">
-        <label for="rows">Zeilen:</label>
-        <input type="number" id="rows" min="5" max="20" value="11">
-        <label for="cols">Spalten:</label>
-        <input type="number" id="cols" min="5" max="20" value="11">
-        <button id="updateGrid">Grid aktualisieren</button>
+    <div id="tabs">
+        <button id="tabEditor" class="tab active">Editor</button>
+        <button id="tabPreview" class="tab">Preview</button>
     </div>
-    <div id="mainFlex">
-        <div id="leftPanel">
-            <div id="gridPreview"></div>
-            <div id="progressContainer">
-                <div id="progressText"></div>
-                <div id="progressBarBg">
-                    <div id="progressBar"></div>
+    <div id="tabContentEditor">
+        <div id="controls">
+            <label for="rows">Zeilen:</label>
+            <input type="number" id="rows" min="5" max="20" value="11">
+            <label for="cols">Spalten:</label>
+            <input type="number" id="cols" min="5" max="20" value="11">
+            <button id="updateGrid">Grid aktualisieren</button>
+            <button id="clearGrid" type="button">Grid leeren</button>
+            <button id="fillEmptyWithX" type="button">Leere Zellen mit X füllen</button>
+        </div>
+        <div id="mainFlex">
+            <div id="leftPanel">
+                <div id="gridPreview"></div>
+                <div id="progressContainer">
+                    <div id="progressText"></div>
+                    <div id="progressBarBg">
+                        <div id="progressBar"></div>
+                    </div>
                 </div>
             </div>
+            <div id="checklistPanel">
+                <h2>Checkliste benötigter Wörter</h2>
+                <form id="addWordForm">
+                    <input type="text" id="newWordInput" maxlength="20" placeholder="Wort hinzufügen" autocomplete="off">
+                    <button type="submit">+</button>
+                </form>
+                <ul id="wordChecklist"></ul>
+            </div>
         </div>
-        <div id="checklistPanel">
-            <h2>Checkliste benötigter Wörter</h2>
-            <form id="addWordForm">
-                <input type="text" id="newWordInput" maxlength="20" placeholder="Wort hinzufügen" autocomplete="off">
-                <button type="submit">+</button>
-            </form>
-            <ul id="wordChecklist"></ul>
+    </div>
+    <div id="tabContentPreview" style="display:none;">
+        <div id="mainFlex">
+            <div id="leftPanel">
+                <div id="clockPreview"></div>
+            </div>
+            <div id="previewSettingsPanel">
+                <div id="previewSettingsTabs">
+                    <button id="previewTabSettings" class="tab active">Allgemein</button>
+                    <button id="previewTabTime" class="tab">Zeit-Vorschau</button>
+                </div>
+                <div id="previewSettingsGeneral">
+                    <h2>Vorschau-Einstellungen</h2>
+                    <label for="clockBgColor">Hintergrundfarbe:</label>
+                    <input type="color" id="clockBgColor" value="#222222">
+                    <br><br>
+                    <label for="clockPadding">Padding (px):</label>
+                    <input type="number" id="clockPadding" min="0" max="100" value="40" style="width:4rem;">
+                    <br><br>
+                    <label for="clockFont">Schriftart:</label>
+                    <select id="clockFont">
+                        <option value="'Courier New', Courier, monospace">Monospace</option>
+                        <option value="Consolas, 'Liberation Mono', Menlo, monospace">Consolas</option>
+                        <option value="'Fira Mono', 'DejaVu Sans Mono', monospace">Fira Mono</option>
+                        <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+                        <option value="Arial, Helvetica, sans-serif">Arial</option>
+                        <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+                        <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+                        <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                        <option value="'Lato', Arial, sans-serif">Lato</option>
+                        <option value="'Comic Sans MS', 'Comic Sans', cursive, sans-serif">Comic Sans</option>
+                        <option value="Impact, Charcoal, sans-serif">Impact</option>
+                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                    </select>
+                    <br><br>
+                    <label for="clockRadius">Border Radius (px):</label>
+                    <input type="number" id="clockRadius" min="0" max="100" value="18" style="width:4rem;">
+                    <br><br>
+                    <label for="clockLetterSpacing">Buchstabenabstand (em):</label>
+                    <input type="number" id="clockLetterSpacing" min="0" max="2" step="0.01" value="0.1" style="width:4rem;">
+                </div>
+                <div id="previewSettingsTime" style="display:none;">
+                    <h2>Uhrzeit-Vorschau</h2>
+                    <label for="previewTime">Uhrzeit:</label>
+                    <input type="time" id="previewTime" value="12:00">
+                    <br><br>
+                    <label for="highlightColor">Farbe für leuchtende Wörter:</label>
+                    <input type="color" id="highlightColor" value="#ffe600">
+                    <br><br>
+                    <label for="clockEffect">Animierter Effekt:</label>
+                    <select id="clockEffect">
+                        <option value="none">Kein Effekt</option>
+                        <option value="rainbow">Regenbogen</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
     <script src="main.js"></script>

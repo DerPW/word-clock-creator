@@ -1,3 +1,300 @@
+// Preview-Settings Tabs und Zeit-Highlighting
+window.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+    // Preview-Settings Tabs
+    const previewTabSettings = document.getElementById('previewTabSettings');
+    const previewTabTime = document.getElementById('previewTabTime');
+    const previewSettingsGeneral = document.getElementById('previewSettingsGeneral');
+    const previewSettingsTime = document.getElementById('previewSettingsTime');
+    if (previewTabSettings && previewTabTime && previewSettingsGeneral && previewSettingsTime) {
+        previewTabSettings.addEventListener('click', function() {
+            previewTabSettings.classList.add('active');
+            previewTabTime.classList.remove('active');
+            previewSettingsGeneral.style.display = '';
+            previewSettingsTime.style.display = 'none';
+            renderClockPreview();
+        });
+        previewTabTime.addEventListener('click', function() {
+            previewTabTime.classList.add('active');
+            previewTabSettings.classList.remove('active');
+            previewSettingsGeneral.style.display = 'none';
+            previewSettingsTime.style.display = '';
+            renderClockPreview();
+        });
+    }
+    // Zeit- und Highlight-Änderungen triggern Preview
+    const previewTime = document.getElementById('previewTime');
+    const highlightColor = document.getElementById('highlightColor');
+    [previewTime, highlightColor].forEach(el => {
+        if (el) {
+            el.addEventListener('input', function() { renderClockPreview(); });
+            el.addEventListener('change', function() { renderClockPreview(); });
+        }
+    });
+});
+// Grid mit X füllen (Test-Button)
+window.addEventListener('DOMContentLoaded', function() {
+    // Nur leere Zellen mit X füllen
+    const fillEmptyBtn = document.getElementById('fillEmptyWithX');
+    if (fillEmptyBtn) {
+        fillEmptyBtn.addEventListener('click', function() {
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    if (!grid[i][j] || grid[i][j] === ' ') {
+                        grid[i][j] = 'X';
+                    }
+                }
+            }
+            renderGrid();
+            updateChecklist();
+        });
+    }
+    // Grid leeren Button
+    const clearBtn = document.getElementById('clearGrid');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    grid[i][j] = '';
+                }
+            }
+            renderGrid();
+            updateChecklist();
+        });
+    }
+});
+// Tab-Switching und Preview-Logik
+window.addEventListener('DOMContentLoaded', function() {
+    // Tab-Switching
+    const tabEditor = document.getElementById('tabEditor');
+    const tabPreview = document.getElementById('tabPreview');
+    const tabContentEditor = document.getElementById('tabContentEditor');
+    const tabContentPreview = document.getElementById('tabContentPreview');
+    if (tabEditor && tabPreview && tabContentEditor && tabContentPreview) {
+        tabEditor.addEventListener('click', function() {
+            tabEditor.classList.add('active');
+            tabPreview.classList.remove('active');
+            tabContentEditor.style.display = '';
+            tabContentPreview.style.display = 'none';
+        });
+        tabPreview.addEventListener('click', function() {
+            tabPreview.classList.add('active');
+            tabEditor.classList.remove('active');
+            tabContentEditor.style.display = 'none';
+            tabContentPreview.style.display = '';
+            renderClockPreview();
+        });
+    }
+
+    // Preview-Einstellungen
+    const clockBgColor = document.getElementById('clockBgColor');
+    const clockPadding = document.getElementById('clockPadding');
+    const clockFont = document.getElementById('clockFont');
+    const clockRadius = document.getElementById('clockRadius');
+    const clockLetterSpacing = document.getElementById('clockLetterSpacing');
+    const clockEffect = document.getElementById('clockEffect');
+    [clockBgColor, clockPadding, clockFont, clockRadius, clockLetterSpacing, clockEffect].forEach(el => {
+        if (el) {
+            el.addEventListener('input', function() {
+                renderClockPreview();
+            });
+            el.addEventListener('change', function() {
+                renderClockPreview();
+            });
+        }
+    });
+});
+
+function renderClockPreview() {
+    const clockPreview = document.getElementById('clockPreview');
+    if (!clockPreview) return;
+    const color = document.getElementById('clockBgColor')?.value || '#222';
+    const padding = parseInt(document.getElementById('clockPadding')?.value || '40', 10);
+    const font = document.getElementById('clockFont')?.value || "'Courier New', Courier, monospace";
+    const radius = parseInt(document.getElementById('clockRadius')?.value || '18', 10);
+    const previewTime = document.getElementById('previewTime')?.value;
+    const highlightColor = document.getElementById('highlightColor')?.value || '#ffe600';
+    clockPreview.style.background = color;
+    clockPreview.style.padding = padding + 'px';
+    clockPreview.style.borderRadius = radius + 'px';
+    clockPreview.style.setProperty('--highlight-color', highlightColor);
+    // Wert aus Select direkt als fontFamily übernehmen (muss vollständiger Font-Family-String sein)
+    clockPreview.style.fontFamily = font;
+    // Buchstabenabstand anwenden
+    const letterSpacing = document.getElementById('clockLetterSpacing')?.value || '0.1';
+    clockPreview.style.letterSpacing = letterSpacing + 'em';
+
+    // Zeit-Highlighting: Ermittle Wörter, die für die Uhrzeit leuchten sollen
+    let highlightMap = {};
+    if (previewTime) {
+        const [h, m] = previewTime.split(':').map(Number);
+        highlightMap = getWordclockHighlightMap(h, m);
+    }
+
+    // Effekt-Option auslesen
+    const effect = document.getElementById('clockEffect')?.value || 'none';
+
+    // Grid als Tabelle, nicht editierbar, keine Gridlines
+    let html = `<table>`;
+    for (let i = 0; i < rows; i++) {
+        html += '<tr>';
+        for (let j = 0; j < cols; j++) {
+            const letter = grid[i] && grid[i][j] ? grid[i][j] : '';
+            let cellClass = '';
+            if (Object.keys(highlightMap).length > 0) {
+                // Prüfe, ob dieses Feld zu einem leuchtenden Wort gehört
+                let found = false;
+                for (const word in highlightMap) {
+                    for (const pos of highlightMap[word]) {
+                        if (pos[0] === i && pos[1] === j) { found = true; break; }
+                    }
+                    if (found) break;
+                }
+                if (found) {
+                    cellClass = 'highlight' + (effect === 'rainbow' ? ' rainbow' : '');
+                } else {
+                    cellClass = 'dimmed';
+                }
+            }
+            html += `<td class="${cellClass}">${letter ? letter : '&nbsp;'}</td>`;
+        }
+        html += '</tr>';
+    }
+    html += '</table>';
+    clockPreview.innerHTML = html;
+}
+
+// Gibt ein Mapping von Wort zu Buchstaben-Positionen zurück, die für die Uhrzeit leuchten sollen
+function getWordclockHighlightMap(hour, minute) {
+    // Deutsche Wordclock-Logik
+    const words = ["ES", "IST"];
+    const hourWords = ["EINS", "ZWEI", "DREI", "VIER", "FÜNF", "SECHS", "SIEBEN", "ACHT", "NEUN", "ZEHN", "ELF", "ZWÖLF"];
+    let h = hour % 12;
+    if (h === 0) h = 12;
+    let nextHour = (h % 12) + 1;
+    if (nextHour === 13) nextHour = 1;
+    // Minuten auf 5er Schritte runden
+    let m = Math.round(minute / 5) * 5;
+    if (m === 60) {
+        m = 0;
+        h = nextHour;
+        nextHour = (h % 12) + 1;
+        if (nextHour === 13) nextHour = 1;
+    }
+    // Zeitlogik
+    if (m === 0) {
+        if (h === 1) {
+            words.push("EIN");
+        } else {
+            words.push(hourWords[h-1]);
+        }
+        words.push("UHR");
+    } else if (m === 5) {
+        words.push("FÜNF"); words.push("NACH"); words.push(hourWords[h-1]);
+    } else if (m === 10) {
+        words.push("ZEHN"); words.push("NACH"); words.push(hourWords[h-1]);
+    } else if (m === 15) {
+        words.push("VIERTEL"); words.push("NACH"); words.push(hourWords[h-1]);
+    } else if (m === 20) {
+        words.push("ZWANZIG"); words.push("NACH"); words.push(hourWords[h-1]);
+    } else if (m === 25) {
+        words.push("FÜNF"); words.push("VOR"); words.push("HALB"); words.push(hourWords[nextHour-1]);
+    } else if (m === 30) {
+        words.push("HALB"); words.push(hourWords[nextHour-1]);
+    } else if (m === 35) {
+        words.push("FÜNF"); words.push("NACH"); words.push("HALB"); words.push(hourWords[nextHour-1]);
+    } else if (m === 40) {
+        words.push("ZWANZIG"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+    } else if (m === 45) {
+        words.push("VIERTEL"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+    } else if (m === 50) {
+        words.push("ZEHN"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+    } else if (m === 55) {
+        words.push("FÜNF"); words.push("VOR"); words.push(hourWords[nextHour-1]);
+    }
+    // Finde die Positionen der Wörter im Grid
+    const map = {};
+    for (const word of words) {
+        const allPositions = findAllWordPositionsInGrid(grid, word);
+        // Versuche ein Vorkommen zu finden, das nicht Teil eines längeren Wortes ist
+        let chosen = null;
+        for (const posArr of allPositions) {
+            // Prüfe, ob dieses Vorkommen Teil eines anderen (längeren) Wortes ist
+            let isPartOfLonger = false;
+            for (const otherWord of requiredWords) {
+                if (otherWord.length > word.length) {
+                    for (const otherPosArr of findAllWordPositionsInGrid(grid, otherWord)) {
+                        if (posArr.every(([x, y]) => otherPosArr.some(([ox, oy]) => ox === x && oy === y))) {
+                            isPartOfLonger = true;
+                            break;
+                        }
+                    }
+                }
+                if (isPartOfLonger) break;
+            }
+            if (!isPartOfLonger) {
+                chosen = posArr;
+                break;
+            }
+        }
+        if (!chosen && allPositions.length > 0) chosen = allPositions[0];
+        if (chosen) map[word] = chosen;
+    }
+    return map;
+}
+
+// Gibt alle Buchstaben-Positionen aller Vorkommen eines Wortes im Grid zurück (horizontal/vertikal)
+function findAllWordPositionsInGrid(grid, word) {
+    word = word.toUpperCase();
+    const r = grid.length;
+    const c = grid[0].length;
+    const positions = [];
+    // Horizontal
+    for (let i = 0; i < r; i++) {
+        const rowStr = grid[i].join('');
+        let idx = rowStr.indexOf(word);
+        while (idx !== -1) {
+            positions.push(Array.from({length: word.length}, (_, k) => [i, idx + k]));
+            idx = rowStr.indexOf(word, idx + 1);
+        }
+    }
+    // Vertikal
+    for (let j = 0; j < c; j++) {
+        let colStr = '';
+        for (let i = 0; i < r; i++) colStr += grid[i][j];
+        let idx = colStr.indexOf(word);
+        while (idx !== -1) {
+            positions.push(Array.from({length: word.length}, (_, k) => [idx + k, j]));
+            idx = colStr.indexOf(word, idx + 1);
+        }
+    }
+    return positions;
+}
+
+// Gibt alle Buchstaben-Positionen eines Wortes im Grid zurück (nur horizontal/vertikal, erstes Vorkommen)
+function findWordPositionsInGrid(grid, word) {
+    word = word.toUpperCase();
+    const r = grid.length;
+    const c = grid[0].length;
+    // Horizontal
+    for (let i = 0; i < r; i++) {
+        const rowStr = grid[i].join('');
+        const idx = rowStr.indexOf(word);
+        if (idx !== -1) {
+            return Array.from({length: word.length}, (_, k) => [i, idx + k]);
+        }
+    }
+    // Vertikal
+    for (let j = 0; j < c; j++) {
+        let colStr = '';
+        for (let i = 0; i < r; i++) colStr += grid[i][j];
+        const idx = colStr.indexOf(word);
+        if (idx !== -1) {
+            return Array.from({length: word.length}, (_, k) => [idx + k, j]);
+        }
+    }
+    return [];
+}
 // Grid-Input-Handler (Buchstabe eintragen und Fokus weiter)
 function onGridInput(e) {
     const row = parseInt(e.target.dataset.row);
@@ -50,11 +347,23 @@ function onGridKeyDown(e) {
 // Standardwerte
 let rows = 11;
 let cols = 11;
-let grid = [];
+let grid = [
+    Array.from('ESXISTXZEHN'.split('')),
+    Array.from('FÜNFVIERTEL'.split('')),
+    Array.from('ZWANZIGXVOR'.split('')),
+    Array.from('XNACHXHALBX'.split('')),
+    Array.from('XEINSXZWEIX'.split('')),
+    Array.from('XDREIXVIERX'.split('')),
+    Array.from('XFÜNFXSECHS'.split('')),
+    Array.from('SIEBENXACHT'.split('')),
+    Array.from('XNEUNXZEHNX'.split('')),
+    Array.from('XELFXZWÖLFX'.split('')),
+    Array.from('XXXXXUHRXX'.split(''))
+];
 
 // Standardbegriffe für Vorschläge
 const defaultWords = [
-    "ES", "IST", "VIERTEL", "HALB", "DREIVIERTEL", "NACH", "VOR", "UHR",
+    "ES", "IST", "VIERTEL", "HALB", "NACH", "VOR", "UHR",
     "EINS", "ZWEI", "DREI", "VIER", "FÜNF", "SECHS", "SIEBEN", "ACHT", "NEUN", "ZEHN", "ELF", "ZWÖLF"
 ];
 // Dynamische Wortliste (startet mit Standardwörtern)
@@ -196,7 +505,6 @@ document.getElementById('updateGrid').addEventListener('click', updateGridSize);
 
 // Initialisierung
 window.onload = () => {
-    grid = createEmptyGrid(rows, cols);
     renderGrid();
     updateChecklist();
 };
