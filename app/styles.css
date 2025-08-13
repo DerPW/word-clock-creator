@@ -1,0 +1,180 @@
+#wordChecklist .addWordBtn {
+    background: none;
+    border: none;
+    color: #1db954;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+#wordChecklist .addWordBtn:hover {
+    color: #158a36;
+}
+#leftPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+#progressContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 1.2rem auto 0 auto;
+    text-align: center;
+}
+#progressText {
+    font-size: 1.05rem;
+    margin-bottom: 0.3rem;
+    color: #333;
+}
+#progressBarBg {
+    width: 100%;
+    height: 18px;
+    background: #e0e0e0;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+#progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, #0078d7 60%, #00c3a0 100%);
+    width: 0%;
+    border-radius: 9px 0 0 9px;
+    transition: width 0.3s;
+}
+#mainFlex {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 2rem auto;
+}
+#checklistPanel {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 1.2rem 1.5rem 1.5rem 1.5rem;
+    min-width: 270px;
+    max-width: 350px;
+}
+#addWordForm {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+#addWordForm input[type="text"] {
+    flex: 1;
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+#addWordForm button {
+    padding: 0.3rem 0.8rem;
+    font-size: 1.1rem;
+    background: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#addWordForm button:hover {
+    background: #005fa3;
+}
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+h1 {
+    color: #333;
+    margin-top: 2rem;
+}
+h2 {
+    margin-top: 0;
+}
+#controls {
+    margin: 1.5rem 0 1rem 0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+#controls input[type="number"] {
+    width: 3rem;
+    padding: 0.2rem;
+    font-size: 1rem;
+}
+#controls button {
+    padding: 0.4rem 1.2rem;
+    font-size: 1rem;
+    background: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#controls button:hover {
+    background: #005fa3;
+}
+#gridPreview {
+    margin: 1rem 0 2rem 0;
+}
+#wordGrid {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+#wordGrid td {
+    border: 1px solid #bbb;
+    width: 2.2rem;
+    height: 2.2rem;
+    text-align: center;
+    background: #fff;
+    padding: 0;
+}
+#wordGrid input[type="text"] {
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    text-align: center;
+    font-size: 1.2rem;
+    background: transparent;
+    outline: none;
+    text-transform: uppercase;
+}
+#wordChecklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 350px;
+}
+#wordChecklist li {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+#wordChecklist .removeWordBtn {
+    background: none;
+    border: none;
+    color: #c00;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    padding: 0;
+    line-height: 1;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Clock Creator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Word Clock Creator</h1>
+    <div id="controls">
+        <label for="rows">Zeilen:</label>
+        <input type="number" id="rows" min="5" max="20" value="11">
+        <label for="cols">Spalten:</label>
+        <input type="number" id="cols" min="5" max="20" value="11">
+        <button id="updateGrid">Grid aktualisieren</button>
+    </div>
+    <div id="mainFlex">
+        <div id="leftPanel">
+            <div id="gridPreview"></div>
+            <div id="progressContainer">
+                <div id="progressText"></div>
+                <div id="progressBarBg">
+                    <div id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+        <div id="checklistPanel">
+            <h2>Checkliste benötigter Wörter</h2>
+            <form id="addWordForm">
+                <input type="text" id="newWordInput" maxlength="20" placeholder="Wort hinzufügen" autocomplete="off">
+                <button type="submit">+</button>
+            </form>
+            <ul id="wordChecklist"></ul>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
