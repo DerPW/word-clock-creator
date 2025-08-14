@@ -435,6 +435,9 @@ let grid = [
     Array.from('XXXXXUHRXXX'.split(''))
 ];
 
+// Highlight-Status für das Editor-Grid
+let editorWordHighlight = true;
+
 // Standardbegriffe für Vorschläge
 const defaultWords = [
     "ES", "IST", "VIERTEL", "HALB", "NACH", "VOR", "UHR", "ZWANZIG",
@@ -459,18 +462,20 @@ function renderGrid() {
     });
     // Map: Position "i,j" => Farbe
     let posColorMap = {};
-    requiredWords.forEach((word) => {
-        const positionsArr = findAllWordPositionsInGrid(grid, word);
-        for (const positions of positionsArr) {
-            for (const [i, j] of positions) {
-                const key = i + ',' + j;
-                // Falls ein Buchstabe zu mehreren Wörtern gehört, nimmt das "erste" Wort die Farbe
-                if (!posColorMap[key]) {
-                    posColorMap[key] = colorMap[word];
+    if (editorWordHighlight) {
+        requiredWords.forEach((word) => {
+            const positionsArr = findAllWordPositionsInGrid(grid, word);
+            for (const positions of positionsArr) {
+                for (const [i, j] of positions) {
+                    const key = i + ',' + j;
+                    // Falls ein Buchstabe zu mehreren Wörtern gehört, nimmt das "erste" Wort die Farbe
+                    if (!posColorMap[key]) {
+                        posColorMap[key] = colorMap[word];
+                    }
                 }
             }
-        }
-    });
+        });
+    }
     let html = '<table id="wordGrid">';
     for (let i = 0; i < rows; i++) {
         html += '<tr>';
@@ -490,6 +495,19 @@ function renderGrid() {
         input.addEventListener('keydown', onGridKeyDown);
     });
 }
+// Button für Wort-Highlighting im Editor
+window.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleWordHighlight');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            editorWordHighlight = !editorWordHighlight;
+            toggleBtn.textContent = 'Wort-Highlight: ' + (editorWordHighlight ? 'An' : 'Aus');
+            renderGrid();
+        });
+        // Initialer Button-Text
+        toggleBtn.textContent = 'Wort-Highlight: ' + (editorWordHighlight ? 'An' : 'Aus');
+    }
+});
 function updateChecklist() {
     const wordChecklist = document.getElementById('wordChecklist');
     if (!wordChecklist) return;
