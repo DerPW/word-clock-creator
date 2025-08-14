@@ -48,7 +48,7 @@
             <div id="leftPanel">
                 <div id="clockPreview"></div>
             </div>
-            <div id="previewSettingsPanel">
+                <div id="previewSettingsPanel">
                 <div id="previewSettingsTabs">
                     <button id="previewTabSettings" class="tab active">Allgemein</button>
                     <button id="previewTabTime" class="tab">Zeit-Vorschau</button>
@@ -87,6 +87,12 @@
                 </div>
                 <div id="previewSettingsTime" style="display:none;">
                     <h2>Uhrzeit-Vorschau</h2>
+                    <div style="margin-bottom: 1em;">
+                        <label style="display: flex; align-items: center; gap: 0.5em; font-size: 1em;">
+                            <input type="checkbox" id="showMinuteDots" />
+                            <span>Vier Minutendots anzeigen</span>
+                        </label>
+                    </div>
                     <label for="previewTime">Uhrzeit:</label>
                     <input type="time" id="previewTime">
                     <br><br>

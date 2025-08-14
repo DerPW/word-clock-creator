@@ -1,3 +1,12 @@
+// Event-Listener für Minutendots-Checkbox, damit die Vorschau sofort aktualisiert wird
+window.addEventListener('DOMContentLoaded', function() {
+    const minuteDotsCheckbox = document.getElementById('showMinuteDots');
+    if (minuteDotsCheckbox) {
+        minuteDotsCheckbox.addEventListener('change', function() {
+            renderClockPreview();
+        });
+    }
+});
 // Preview-Settings Tabs und Zeit-Highlighting
 window.addEventListener('DOMContentLoaded', function() {
     // ...existing code...
@@ -143,6 +152,11 @@ function renderClockPreview() {
     const effect = document.getElementById('clockEffect')?.value || 'none';
 
     // Grid als Tabelle, nicht editierbar, keine Gridlines
+    // rows und cols global verwenden
+    if (typeof rows === 'undefined' || typeof cols === 'undefined') {
+        window.rows = grid.length;
+        window.cols = grid[0].length;
+    }
     let html = `<table>`;
     for (let i = 0; i < rows; i++) {
         html += '<tr>';
@@ -169,6 +183,56 @@ function renderClockPreview() {
         }
         html += '</tr>';
     }
+    // Minutendots-Zeile (optional)
+    const showMinuteDots = document.getElementById('showMinuteDots')?.checked;
+    if (showMinuteDots) {
+        // Die vier Dots sollen mittig unter dem Grid erscheinen
+        // Ermittle die mittleren vier Spalten
+        let dotCols = [];
+        if (cols >= 4) {
+            const start = Math.floor((cols - 4) / 2);
+            dotCols = [start, start + 1, start + 2, start + 3];
+        }
+        // Ermittle die aktuelle Minute
+        let previewTime = document.getElementById('previewTime')?.value;
+        let minute = null;
+        if (previewTime) {
+            const parts = previewTime.split(':');
+            if (parts.length === 2) {
+                minute = parseInt(parts[1], 10);
+            }
+        }
+        // Mapping: Dot-Index zu Minuten
+        // Dot 0: 1,6,11,16,21,26,31,36,41,46,51,56
+        // Dot 1: 2,7,12,17,22,27,32,37,42,47,52,57
+        // Dot 2: 3,8,13,18,23,28,33,38,43,48,53,58
+        // Dot 3: 4,9,14,19,24,29,34,39,44,49,54,59
+        const dotMinuteMap = [ [1,6], [2,7], [3,8], [4,9] ];
+        html += '<tr>';
+        let currentDot = -1;
+        if (minute !== null) {
+            const m = minute % 10;
+            for (let d = 0; d < dotMinuteMap.length; d++) {
+                if (dotMinuteMap[d].includes(m)) {
+                    currentDot = d;
+                    break;
+                }
+            }
+        }
+        for (let j = 0; j < cols; j++) {
+            const dotIdx = dotCols.indexOf(j);
+            if (dotIdx !== -1) {
+                let active = false;
+                if (currentDot !== -1 && dotIdx <= currentDot) {
+                    active = true;
+                }
+                html += `<td><span class="minute-dot${active ? ' active' : ''}">●</span></td>`;
+            } else {
+                html += '<td></td>';
+            }
+        }
+        html += '</tr>';
+    }
     html += '</table>';
     clockPreview.innerHTML = html;
 }
@@ -182,13 +246,21 @@ function getWordclockHighlightMap(hour, minute) {
     if (h === 0) h = 12;
     let nextHour = (h % 12) + 1;
     if (nextHour === 13) nextHour = 1;
-    // Minuten auf 5er Schritte runden
-    let m = Math.round(minute / 5) * 5;
-    if (m === 60) {
-        m = 0;
-        h = nextHour;
-        nextHour = (h % 12) + 1;
-        if (nextHour === 13) nextHour = 1;
+    // Prüfe, ob die Minutendots-Option aktiv ist
+    const showMinuteDots = document.getElementById('showMinuteDots')?.checked;
+    let m;
+    if (showMinuteDots) {
+        // Minuten NICHT runden, sondern exakt verwenden (nur für die Anzeige der Wörter)
+        m = Math.floor(minute / 5) * 5;
+    } else {
+        // Wie vorher: Minuten auf 5er Schritte runden
+        m = Math.round(minute / 5) * 5;
+        if (m === 60) {
+            m = 0;
+            h = nextHour;
+            nextHour = (h % 12) + 1;
+            if (nextHour === 13) nextHour = 1;
+        }
     }
     // Wörter für die aktuelle Zeit bestimmen
     switch (m) {
