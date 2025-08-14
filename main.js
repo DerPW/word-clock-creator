@@ -359,15 +359,33 @@ function onGridInput(e) {
     grid[row][col] = val;
     updateChecklist();
 
+    // Nach dem Rendern Fokus und Selektion wiederherstellen
+    const prevSelectionStart = e.target.selectionStart;
+    const prevSelectionEnd = e.target.selectionEnd;
+    renderGrid(); // Farben sofort aktualisieren
+    // Nach dem Rendern das gleiche Input-Feld wieder fokussieren
+    setTimeout(() => {
+        const input = document.querySelector(`#wordGrid input[data-row='${row}'][data-col='${col}']`);
+        if (input) {
+            input.focus();
+            // Cursor-Position wiederherstellen
+            if (typeof prevSelectionStart === 'number' && typeof prevSelectionEnd === 'number') {
+                input.setSelectionRange(prevSelectionStart, prevSelectionEnd);
+            }
+        }
+    }, 0);
+
     // Nur bei Eingabe eines Zeichens (nicht bei Löschen)
     if (val.length === 1) {
         // Finde alle Inputs im Grid in Reihenfolge
         const inputs = Array.from(document.querySelectorAll('#wordGrid input'));
-        const idx = inputs.findIndex(inp => inp === e.target);
+        const idx = inputs.findIndex(inp => inp.dataset.row == row && inp.dataset.col == col);
         if (idx !== -1 && idx < inputs.length - 1) {
             // Nächste Zelle fokussieren
-            inputs[idx + 1].focus();
-            inputs[idx + 1].select();
+            setTimeout(() => {
+                inputs[idx + 1].focus();
+                inputs[idx + 1].select();
+            }, 0);
         }
     }
 }
@@ -419,7 +437,7 @@ let grid = [
 
 // Standardbegriffe für Vorschläge
 const defaultWords = [
-    "ES", "IST", "VIERTEL", "HALB", "NACH", "VOR", "UHR",
+    "ES", "IST", "VIERTEL", "HALB", "NACH", "VOR", "UHR", "ZWANZIG",
     "EINS", "ZWEI", "DREI", "VIER", "FÜNF", "SECHS", "SIEBEN", "ACHT", "NEUN", "ZEHN", "ELF", "ZWÖLF"
 ];
 // Dynamische Wortliste (startet mit Standardwörtern)
@@ -431,11 +449,35 @@ function createEmptyGrid(r, c) {
 
 function renderGrid() {
     const gridPreview = document.getElementById('gridPreview');
+    // Eindeutige Farben für jedes Wort (außer gleiche Wörter)
+    // Map: Wort => Farbe
+    const uniqueWords = Array.from(new Set(requiredWords));
+    const colorMap = {};
+    uniqueWords.forEach((word, idx) => {
+        // Gleichmäßig verteilte HSL-Farben, 70% Sättigung, 70% Helligkeit
+        colorMap[word] = `hsl(${Math.round(360 * idx / uniqueWords.length)}, 70%, 70%)`;
+    });
+    // Map: Position "i,j" => Farbe
+    let posColorMap = {};
+    requiredWords.forEach((word) => {
+        const positionsArr = findAllWordPositionsInGrid(grid, word);
+        for (const positions of positionsArr) {
+            for (const [i, j] of positions) {
+                const key = i + ',' + j;
+                // Falls ein Buchstabe zu mehreren Wörtern gehört, nimmt das "erste" Wort die Farbe
+                if (!posColorMap[key]) {
+                    posColorMap[key] = colorMap[word];
+                }
+            }
+        }
+    });
     let html = '<table id="wordGrid">';
     for (let i = 0; i < rows; i++) {
         html += '<tr>';
         for (let j = 0; j < cols; j++) {
-            html += `<td><input type="text" maxlength="1" value="${grid[i][j] || ''}" data-row="${i}" data-col="${j}" /></td>`;
+            const key = i + ',' + j;
+            const color = posColorMap[key];
+            html += `<td${color ? ` style=\"background:${color};transition:background 0.2s;\"` : ''}><input type="text" maxlength="1" value="${grid[i][j] || ''}" data-row="${i}" data-col="${j}" /></td>`;
         }
         html += '</tr>';
     }
@@ -447,7 +489,6 @@ function renderGrid() {
         input.addEventListener('input', onGridInput);
         input.addEventListener('keydown', onGridKeyDown);
     });
-
 }
 function updateChecklist() {
     const wordChecklist = document.getElementById('wordChecklist');

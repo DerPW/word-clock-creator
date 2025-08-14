@@ -270,6 +270,9 @@ h2 {
     background: #fff;
     padding: 0;
 }
+#wordGrid td.editor-highlight {
+    /* nicht mehr benötigt, Farben werden inline gesetzt */
+}
 #wordGrid input[type="text"] {
     width: 2rem;
     height: 2rem;
