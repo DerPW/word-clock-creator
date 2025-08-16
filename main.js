@@ -1,3 +1,55 @@
+// --- Grid Export/Import ---
+function exportGridToText() {
+    let out = grid.map(row => row.map(cell => cell || ' ').join('')).join('\n');
+    return out;
+}
+
+function importTextToGrid(text) {
+    let lines = text.trim().split(/\r?\n/);
+    let newRows = lines.length;
+    let newCols = Math.max(...lines.map(l => l.length));
+    document.getElementById('rows').value = newRows;
+    document.getElementById('cols').value = newCols;
+    updateGridSize();
+    // Nach dem Rendern einfügen
+    setTimeout(() => {
+        for (let r = 0; r < newRows; r++) {
+            for (let c = 0; c < newCols; c++) {
+                grid[r][c] = (lines[r][c] || ' ').toUpperCase();
+            }
+        }
+        renderGrid();
+        updateChecklist();
+    }, 0);
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    const exportBtn = document.getElementById('exportGrid');
+    const importBtn = document.getElementById('importGrid');
+    const area = document.getElementById('importExportArea');
+    if (exportBtn && area) {
+        exportBtn.addEventListener('click', function() {
+            area.value = exportGridToText();
+            area.style.display = 'block';
+            area.select();
+        });
+    }
+    if (importBtn && area) {
+        importBtn.addEventListener('click', function() {
+            area.style.display = 'block';
+            area.focus();
+        });
+    }
+    if (area) {
+        area.addEventListener('blur', function() {
+            // Wenn Text vorhanden, importieren
+            if (area.value.trim()) {
+                importTextToGrid(area.value);
+            }
+            // area.style.display = 'none'; // Optional: nach Import ausblenden
+        });
+    }
+});
 // Event-Listener für Minutendots-Checkbox, damit die Vorschau sofort aktualisiert wird
 window.addEventListener('DOMContentLoaded', function() {
     const minuteDotsCheckbox = document.getElementById('showMinuteDots');

@@ -1,3 +1,30 @@
+#mainFlex {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+#editorSidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    min-width: 150px;
+    margin-right: 0.5rem;
+    margin-left: 0;
+    padding: 0;
+}
+#controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: flex-start;
+}
+#controls button {
+    min-width: 150px;
+    margin-bottom: 0.2rem;
+    align-self: stretch;
+}
 #clockPreview .minute-dot {
     display: inline-block;
     font-size: 1.1rem;
@@ -162,7 +189,6 @@
 #progressContainer {
     width: 100%;
     max-width: 400px;
-    margin: 1.2rem auto 0 auto;
     text-align: center;
 }
 #progressText {

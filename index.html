@@ -13,17 +13,28 @@
         <button id="tabPreview" class="tab">Preview</button>
     </div>
     <div id="tabContentEditor">
-        <div id="controls">
-            <label for="rows">Zeilen:</label>
-            <input type="number" id="rows" min="5" max="20" value="11">
-            <label for="cols">Spalten:</label>
-            <input type="number" id="cols" min="5" max="20" value="11">
-            <button id="updateGrid">Grid aktualisieren</button>
-            <button id="clearGrid" type="button">Grid leeren</button>
-            <button id="fillEmptyWithX" type="button">Leere Zellen mit X füllen</button>
-            <button id="toggleWordHighlight" type="button">Wort-Highlight: An</button>
-        </div>
         <div id="mainFlex">
+            <div id="editorSidebar">
+                <div id="controls">
+                    <div style="display: flex; gap: 0.7em; align-items: flex-end;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="rows">Zeilen:</label>
+                            <input type="number" id="rows" min="5" max="20" value="11">
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="cols">Spalten:</label>
+                            <input type="number" id="cols" min="5" max="20" value="11">
+                        </div>
+                    </div>
+                    <button id="updateGrid" style="margin-top:0.5em;">Grid aktualisieren</button>
+                    <button id="clearGrid" type="button">Grid leeren</button>
+                    <button id="fillEmptyWithX" type="button">Leere Zellen mit X füllen</button>
+                    <button id="toggleWordHighlight" type="button">Wort-Highlight: An</button>
+                    <button id="exportGrid" type="button">Grid exportieren</button>
+                    <button id="importGrid" type="button">Grid importieren</button>
+                    <textarea id="importExportArea" rows="6" style="width:100%;margin-top:0.5em;display:none;" placeholder="Hier exportierte Matrix einfügen oder kopieren..."></textarea>
+                </div>
+            </div>
             <div id="leftPanel">
                 <div id="gridPreview"></div>
                 <div id="progressContainer">
